@@ -12,15 +12,29 @@
 </head>
 <body class="prelude-open">
   <section class="entry-screen" id="entry-screen" aria-label="Entrada da experiência">
+    <div class="entry-mosaic" aria-hidden="true">
+      <div class="entry-photo" style="--entry-img: url('assets/entry-bg-1.jpeg');"></div>
+      <div class="entry-photo" style="--entry-img: url('assets/entry-bg-2.jpeg');"></div>
+      <div class="entry-photo" style="--entry-img: url('assets/entry-bg-3.jpeg');"></div>
+      <div class="entry-photo" style="--entry-img: url('assets/entry-bg-4.jpeg');"></div>
+      <div class="entry-photo" style="--entry-img: url('assets/entry-bg-5.jpeg');"></div>
+    </div>
     <div class="entry-blur entry-blur-one"></div>
     <div class="entry-blur entry-blur-two"></div>
     <div class="entry-light"></div>
-    <div class="entry-content">
-      <img class="entry-logo" src="assets/logo-original.png" alt="O Som do Altar - Vinicius Perussi" />
-      <h1>Entre na experiência que nos leva ao altar</h1>
-      <p>Uma preparação para a noite em que canções, presença e adoração serão registradas ao vivo.</p>
-      <button class="btn primary entry-button" id="enter-experience" type="button">Entrar na experiência</button>
+      <div class="entry-content">
+        <span class="entry-kicker">Som do Altar Experience</span>
+        <h1>Prepare seu coração</h1>
+      <p>Porém o incenso que fareis conforme essa composição, não o fareis para vós mesmos, santo será para o Senhor.<br />Êxodo 30, 37</p>
+      <button class="btn primary entry-button" id="enter-experience" type="button">Iniciar experiência</button>
+      <div class="entry-progress" aria-hidden="true">
+        <div class="entry-progress-track"><span id="entry-progress-bar"></span></div>
+        <strong id="entry-progress-percent">0%</strong>
+      </div>
+      <button class="entry-skip" id="skip-experience" type="button">Pular</button>
+      <span class="entry-hint">Use fones para melhor imersão</span>
     </div>
+    <audio id="entry-audio" src="assets/som-do-altar.mp3" preload="auto"></audio>
   </section>
 
   <div class="site-shell" id="site-shell">

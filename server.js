@@ -10,7 +10,7 @@ const app = express();
 const port = Number(process.env.PORT || 8000);
 
 app.use(express.json());
-app.use('/assets', express.static(path.join(__dirname, 'assets')));
+app.use('/assets', express.static(path.join(__dirname, 'public', 'assets')));
 
 app.get('/', (_req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
@@ -104,6 +104,10 @@ app.use((error, _req, res, _next) => {
   res.status(500).json({ ok: false, error: 'Erro interno do servidor.' });
 });
 
-app.listen(port, '127.0.0.1', () => {
-  console.log(`Som do Altar rodando em http://127.0.0.1:${port}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(port, '127.0.0.1', () => {
+    console.log(`Som do Altar rodando em http://127.0.0.1:${port}`);
+  });
+}
+
+export default app;

@@ -76,6 +76,31 @@ Depois acesse:
 http://127.0.0.1:8000/
 ```
 
+## Deploy na Vercel
+
+O projeto está pronto para deploy na Vercel usando o `server.js` como função Node/Express e a pasta `public/` para arquivos estáticos.
+
+Antes do deploy, configure as variáveis de ambiente no painel da Vercel:
+
+```env
+DATABASE_URL=postgresql://USER:PASSWORD@HOST/DATABASE?sslmode=verify-full
+```
+
+Não é necessário configurar `PORT` na Vercel.
+
+Depois de importar o repositório:
+
+- Framework Preset: `Other`
+- Install Command: `npm install`
+- Build Command: deixar vazio
+- Output Directory: deixar vazio
+
+Após o primeiro deploy, rode o setup do banco localmente ou pelo terminal com acesso ao mesmo `DATABASE_URL`:
+
+```bash
+npm run db:setup
+```
+
 ## Rotas principais
 
 - `GET /`: página principal
@@ -97,8 +122,9 @@ Payload para envio de depoimento:
 
 ```text
 .
-├── assets/
-│   └── logo-original.png
+├── public/
+│   └── assets/
+│       └── logo-original.png
 ├── scripts/
 │   ├── check-db.js
 │   └── setup-db.js

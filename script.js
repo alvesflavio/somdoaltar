@@ -1,6 +1,13 @@
 const eventDate = new Date('2026-05-06T18:30:00');
 const entryScreen = document.getElementById('entry-screen');
 const enterExperience = document.getElementById('enter-experience');
+const skipExperience = document.getElementById('skip-experience');
+const entryAudio = document.getElementById('entry-audio');
+const entryProgressBar = document.getElementById('entry-progress-bar');
+const entryProgressPercent = document.getElementById('entry-progress-percent');
+const introDuration = 55000;
+let introAnimationFrame;
+let introStartedAt = 0;
 
 if (sessionStorage.getItem('somdoaltar:entered') === 'true') {
   document.body.classList.add('experience-started');
@@ -20,15 +27,69 @@ function updateCountdown() {
 setInterval(updateCountdown, 1000);
 updateCountdown();
 
-enterExperience.addEventListener('click', () => {
+function finishIntro({ stopAudio = false } = {}) {
+  window.cancelAnimationFrame(introAnimationFrame);
+  entryProgressBar.style.width = '100%';
+  entryProgressPercent.textContent = '100%';
+  entryScreen.style.setProperty('--entry-image-blur', '0px');
+  entryScreen.style.setProperty('--entry-image-brightness', '.66');
+  entryScreen.style.setProperty('--entry-image-opacity', '.92');
   sessionStorage.setItem('somdoaltar:entered', 'true');
   document.body.classList.add('experience-started');
   document.body.classList.remove('prelude-open');
+  entryScreen.classList.remove('entry-loading');
   entryScreen.setAttribute('aria-hidden', 'true');
+
+  if (stopAudio && entryAudio) {
+    entryAudio.pause();
+    entryAudio.currentTime = 0;
+  }
 
   window.setTimeout(() => {
     entryScreen.hidden = true;
   }, 900);
+}
+
+function updateIntroProgress(timestamp) {
+  if (!introStartedAt) introStartedAt = timestamp;
+  const elapsed = timestamp - introStartedAt;
+  const percent = Math.min(100, Math.round((elapsed / introDuration) * 100));
+  const progress = percent / 100;
+
+  entryProgressBar.style.width = `${percent}%`;
+  entryProgressPercent.textContent = `${percent}%`;
+  entryScreen.style.setProperty('--entry-image-blur', `${3 - (progress * 3)}px`);
+  entryScreen.style.setProperty('--entry-image-brightness', String(.48 + (progress * .18)));
+  entryScreen.style.setProperty('--entry-image-opacity', String(.76 + (progress * .16)));
+
+  if (elapsed >= introDuration) {
+    finishIntro();
+    return;
+  }
+
+  introAnimationFrame = window.requestAnimationFrame(updateIntroProgress);
+}
+
+enterExperience.addEventListener('click', async () => {
+  entryScreen.classList.add('entry-loading');
+  enterExperience.setAttribute('disabled', 'true');
+  introStartedAt = 0;
+  entryProgressBar.style.width = '0%';
+  entryProgressPercent.textContent = '0%';
+
+  try {
+    entryAudio.currentTime = 0;
+    await entryAudio.play();
+  } catch (error) {
+    entryProgressPercent.textContent = '0%';
+  }
+
+  introAnimationFrame = window.requestAnimationFrame(updateIntroProgress);
+});
+
+skipExperience.addEventListener('click', () => {
+  sessionStorage.setItem('somdoaltar:entered', 'true');
+  finishIntro({ stopAudio: true });
 });
 
 const menuBtn = document.querySelector('.menu-toggle');
