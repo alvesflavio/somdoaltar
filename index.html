@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Som do Altar - Site oficial da gravação do DVD. Informações, repertório, mídia e participação." />
+  <title>Som do Altar | Gravação do DVD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;700&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar" id="home">
+    <a class="brand" href="#home">Som do Altar</a>
+    <button class="menu-toggle" aria-expanded="false" aria-controls="main-nav" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+    <nav id="main-nav" class="main-nav">
+      <a href="#manifesto">Manifesto</a><a href="#setlist">Repertório</a><a href="#midia">Mídia</a><a href="#cronograma">Cronograma</a><a href="#contato">Contato</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero reveal">
+      <div class="hero-content">
+        <p class="date">GRAVAÇÃO AO VIVO • 06/05/2026 às 18:30</p>
+        <h1>DVD<br />SOM DO ALTAR</h1>
+        <p class="lead">Uma noite para registrar canções, testemunhos e o mover de Deus. Projeto com linguagem contemporânea, presença e excelência.</p>
+        <div class="actions"><a class="btn primary" href="#contato">Quero participar</a><a class="btn ghost" href="#midia">Ver mídia</a></div>
+      </div>
+      <aside class="countdown-card">
+        <h3>Contagem regressiva</h3>
+        <div class="countdown" id="countdown"><div><strong id="days">00</strong><span>dias</span></div><div><strong id="hours">00</strong><span>horas</span></div><div><strong id="minutes">00</strong><span>min</span></div></div>
+        <p class="tiny">Data oficial: 06/05/2026 às 18:30.</p>
+      </aside>
+    </section>
+
+    <section class="panel reveal" id="manifesto"><h2>Manifesto</h2><p>O Som do Altar é um chamado à unidade da igreja local, à adoração verdadeira e à excelência na mensagem.</p></section>
+
+    <section class="grid reveal" id="setlist">
+      <article class="card">
+        <h3>Repertório</h3>
+        <div class="tabs" role="tablist"><button class="tab active" data-target="set-a">Bloco A</button><button class="tab" data-target="set-b">Bloco B</button></div>
+        <ul class="tab-content active" id="set-a"><li>Faixa 01 — [Título]</li><li>Faixa 02 — [Título]</li><li>Faixa 03 — [Título]</li><li>Faixa 04 — [Título]</li></ul>
+        <ul class="tab-content" id="set-b"><li>Faixa 05 — [Título]</li><li>Faixa 06 — [Título]</li><li>Faixa 07 — [Título]</li><li>Faixa 08 — [Título]</li></ul>
+      </article>
+      <article class="card"><h3>Convidados</h3><ul><li>[Nome do Convidado]</li><li>[Nome do Convidado]</li><li>[Nome do Convidado]</li><li>[Nome do Convidado]</li></ul></article>
+    </section>
+
+    <section class="panel reveal" id="midia">
+      <h2>Mídia</h2>
+      <div class="video-grid">
+        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Teaser Som do Altar" allowfullscreen></iframe>
+        <iframe src="https://player.vimeo.com/video/76979871" title="Bastidores Som do Altar" allowfullscreen></iframe>
+      </div>
+      <div class="gallery">
+        <img src="https://images.unsplash.com/photo-1464375117522-1311dd7d0cd2?auto=format&fit=crop&w=900&q=80" alt="Palco com iluminação para gravação" />
+        <img src="https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=900&q=80" alt="Equipe de louvor em adoração" />
+        <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=900&q=80" alt="Público durante ministração" />
+      </div>
+    </section>
+
+
+    <section class="panel reveal" id="local">
+      <h2>Local da Gravação</h2>
+      <p><strong>Recanto Tagaste</strong><br />R. José Roschel Rodrigues, 940 - Sítio Laredo, São Paulo - SP, 04880-130</p>
+      <div class="actions">
+        <a class="btn primary" target="_blank" rel="noopener" href="https://maps.google.com/?q=R.%20Jos%C3%A9%20Roschel%20Rodrigues,%20940%20-%20S%C3%ADtio%20Laredo,%20S%C3%A3o%20Paulo%20-%20SP,%2004880-130">Abrir no Google Maps</a>
+      </div>
+    </section>
+
+    <section class="panel reveal" id="cronograma"><h2>Cronograma</h2><div class="timeline"><div><span>1</span>Pré-produção</div><div><span>2</span>Ensaios</div><div><span>3</span>Gravação ao vivo (06/05/2026)</div><div><span>4</span>Lançamento</div></div></section>
+
+    <section class="panel reveal" id="contato">
+      <h2>Contato & Participação</h2>
+      <form class="contact-form" id="contact-form">
+        <label>Nome<input id="nome" type="text" placeholder="Seu nome" required /></label>
+        <label>E-mail<input id="email" type="email" placeholder="voce@email.com" required /></label>
+        <label>Mensagem<textarea id="mensagem" rows="4" placeholder="Como você quer contribuir no projeto?" required></textarea></label>
+        <div class="actions"><button type="submit" class="btn primary">Enviar para WhatsApp</button><a id="email-link" class="btn ghost" href="#">Enviar por E-mail</a></div>
+      </form>
+    </section>
+  </main>
+
+  <footer><p>© 2026 Som do Altar • Projeto em construção.</p></footer>
+  <script src="script.js"></script>
+</body>
+</html>
