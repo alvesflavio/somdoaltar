@@ -7,12 +7,7 @@
   ],
   "functions": {
     "api/index.js": {
-      "includeFiles": [
-        "index.html",
-        "style.css",
-        "script.js",
-        "public/**"
-      ]
+      "includeFiles": "{index.html,style.css,script.js,public/**}"
     }
   }
 }
