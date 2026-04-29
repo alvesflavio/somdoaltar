@@ -24,9 +24,36 @@ app.get('/script.js', (_req, res) => {
   res.sendFile(path.join(__dirname, 'script.js'));
 });
 
+app.get('/adm', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+app.get('/admin.css', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.css'));
+});
+
+app.get('/admin.js', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.js'));
+});
+
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true, service: 'somdoaltar' });
 });
+
+function requireAdmin(req, res, next) {
+  const adminToken = process.env.ADMIN_TOKEN;
+  const requestToken = req.get('x-admin-token');
+
+  if (!adminToken) {
+    return res.status(500).json({ ok: false, error: 'ADMIN_TOKEN nao foi configurado.' });
+  }
+
+  if (requestToken !== adminToken) {
+    return res.status(401).json({ ok: false, error: 'Acesso administrativo negado.' });
+  }
+
+  next();
+}
 
 app.get('/api/db-check', async (_req, res, next) => {
   try {
@@ -58,11 +85,65 @@ app.post('/api/contacts', async (req, res, next) => {
   }
 });
 
+let visitsTableReady = false;
+
+async function ensureVisitsTable() {
+  if (visitsTableReady) {
+    return;
+  }
+
+  await query(`
+    create table if not exists site_visits (
+      id integer primary key default 1,
+      total bigint not null default 0,
+      updated_at timestamptz not null default now(),
+      constraint single_site_visits_row check (id = 1)
+    )
+  `);
+
+  visitsTableReady = true;
+}
+
+app.get('/api/visits', async (_req, res, next) => {
+  try {
+    await ensureVisitsTable();
+
+    const result = await query(
+      `select total
+       from site_visits
+       where id = 1`,
+    );
+
+    res.json({ ok: true, total: Number(result.rows[0]?.total || 0) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/visits', async (_req, res, next) => {
+  try {
+    await ensureVisitsTable();
+
+    const result = await query(
+      `insert into site_visits (id, total)
+       values (1, 1)
+       on conflict (id)
+       do update set total = site_visits.total + 1, updated_at = now()
+       returning total`,
+    );
+
+    res.json({ ok: true, total: Number(result.rows[0].total) });
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.get('/api/testimonials', async (_req, res, next) => {
   try {
     const result = await query(
       `select id, nome, cidade, depoimento, created_at
        from testimonials
+       where approved = true
        order by created_at desc
        limit 24`,
     );
@@ -87,13 +168,67 @@ app.post('/api/testimonials', async (req, res, next) => {
     }
 
     const result = await query(
-      `insert into testimonials (nome, depoimento)
-       values ($1, $2)
-       returning id, nome, depoimento, created_at`,
+      `insert into testimonials (nome, depoimento, approved)
+       values ($1, $2, false)
+       returning id, nome, depoimento, approved, created_at`,
       [nome, depoimento],
     );
 
     res.status(201).json({ ok: true, testimonial: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/admin/testimonials', requireAdmin, async (_req, res, next) => {
+  try {
+    const result = await query(
+      `select id, nome, depoimento, approved, created_at
+       from testimonials
+       order by approved asc, created_at desc
+       limit 100`,
+    );
+
+    res.json({ ok: true, testimonials: result.rows });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.patch('/api/admin/testimonials/:id/approve', requireAdmin, async (req, res, next) => {
+  try {
+    const result = await query(
+      `update testimonials
+       set approved = true
+       where id = $1
+       returning id, nome, depoimento, approved, created_at`,
+      [req.params.id],
+    );
+
+    if (!result.rowCount) {
+      return res.status(404).json({ ok: false, error: 'Testemunho nao encontrado.' });
+    }
+
+    res.json({ ok: true, testimonial: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.delete('/api/admin/testimonials/:id', requireAdmin, async (req, res, next) => {
+  try {
+    const result = await query(
+      `delete from testimonials
+       where id = $1
+       returning id`,
+      [req.params.id],
+    );
+
+    if (!result.rowCount) {
+      return res.status(404).json({ ok: false, error: 'Testemunho nao encontrado.' });
+    }
+
+    res.json({ ok: true });
   } catch (error) {
     next(error);
   }

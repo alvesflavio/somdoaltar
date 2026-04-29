@@ -37,11 +37,13 @@ Copy-Item .env.example .env
 ```
 
 3. Preencha o `DATABASE_URL` no `.env` com a string de conexão do Neon.
+4. Defina um `ADMIN_TOKEN` para acessar o painel de moderação em `/adm`.
 
 Exemplo de formato:
 
 ```env
 DATABASE_URL=postgresql://USER:PASSWORD@HOST/DATABASE?sslmode=verify-full
+ADMIN_TOKEN=um-token-seguro
 PORT=8000
 ```
 
@@ -84,6 +86,7 @@ Antes do deploy, configure as variáveis de ambiente no painel da Vercel:
 
 ```env
 DATABASE_URL=postgresql://USER:PASSWORD@HOST/DATABASE?sslmode=verify-full
+ADMIN_TOKEN=um-token-seguro
 ```
 
 Não é necessário configurar `PORT` na Vercel.
@@ -108,6 +111,10 @@ npm run db:setup
 - `GET /api/db-check`: valida conexão com o banco
 - `GET /api/testimonials`: lista depoimentos
 - `POST /api/testimonials`: grava depoimento
+- `GET /adm`: painel administrativo de testemunhos
+- `GET /api/admin/testimonials`: lista testemunhos para moderação
+- `PATCH /api/admin/testimonials/:id/approve`: aprova testemunho
+- `DELETE /api/admin/testimonials/:id`: remove testemunho
 
 Payload para envio de depoimento:
 
@@ -117,6 +124,8 @@ Payload para envio de depoimento:
   "depoimento": "Texto do depoimento"
 }
 ```
+
+Os testemunhos enviados pelo site entram como pendentes. Eles só aparecem no carrossel público depois de aprovação no `/adm`.
 
 ## Estrutura
 
@@ -129,6 +138,9 @@ Payload para envio de depoimento:
 │   ├── check-db.js
 │   └── setup-db.js
 ├── db.js
+├── admin.html
+├── admin.css
+├── admin.js
 ├── index.html
 ├── script.js
 ├── server.js

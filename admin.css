@@ -1,0 +1,202 @@
+:root {
+  --creme: #d2cdc3;
+  --cobblestone: #aa9f95;
+  --text-light: #f9f6f1;
+  --text-dark: #251915;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  color: var(--text-light);
+  background:
+    linear-gradient(180deg, rgba(5, 5, 6, .92), rgba(22, 10, 10, .9)),
+    url("/assets/entry-bg-5.jpeg") center / cover fixed,
+    #050505;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .022) 1px, transparent 1px);
+  background-size: 4px 4px;
+}
+
+.admin-shell {
+  width: min(1100px, 92vw);
+  margin: 0 auto;
+  padding: 2rem 0 4rem;
+}
+
+.admin-header,
+.admin-list-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.admin-header {
+  margin-bottom: 1rem;
+}
+
+.admin-header span,
+.admin-list-heading span {
+  color: var(--cobblestone);
+  font-family: "Cinzel Decorative", "Cormorant Garamond", serif;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+h1,
+h2 {
+  margin: .2rem 0 0;
+  font-family: "Cormorant Garamond", serif;
+}
+
+h1 {
+  font-size: clamp(2.2rem, 7vw, 4rem);
+}
+
+h2 {
+  font-size: clamp(1.7rem, 4vw, 2.6rem);
+}
+
+a,
+button {
+  border: 1px solid rgba(210, 205, 195, .45);
+  border-radius: 999px;
+  background: rgba(3, 5, 8, .48);
+  color: var(--creme);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  padding: .72rem 1rem;
+  text-decoration: none;
+}
+
+button:hover,
+a:hover {
+  background: var(--creme);
+  color: var(--text-dark);
+}
+
+.admin-panel {
+  margin: 1rem 0;
+  padding: clamp(1rem, 4vw, 1.5rem);
+  border: 1px solid rgba(210, 205, 195, .2);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(210, 205, 195, .08), transparent 18rem),
+    rgba(3, 5, 8, .72);
+  backdrop-filter: blur(14px);
+}
+
+.admin-token {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: .85rem;
+}
+
+label {
+  display: grid;
+  gap: .35rem;
+  font-weight: 800;
+}
+
+input {
+  width: 100%;
+  border: 1px solid rgba(210, 205, 195, .36);
+  border-radius: 10px;
+  background: rgba(24, 12, 12, .55);
+  color: var(--text-light);
+  padding: .78rem;
+  font: inherit;
+}
+
+.admin-status {
+  min-height: 1.4rem;
+  margin: .75rem 0 0;
+  color: var(--cobblestone);
+  font-weight: 800;
+}
+
+.admin-list {
+  display: grid;
+  gap: .8rem;
+  margin-top: 1rem;
+}
+
+.admin-card {
+  display: grid;
+  gap: .8rem;
+  padding: 1rem;
+  border: 1px solid rgba(210, 205, 195, .18);
+  border-radius: 14px;
+  background: rgba(3, 5, 8, .52);
+}
+
+.admin-card.pending {
+  border-color: rgba(255, 226, 215, .42);
+}
+
+.admin-card header,
+.admin-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+
+.admin-card strong {
+  color: var(--creme);
+}
+
+.admin-card time,
+.admin-badge {
+  color: var(--cobblestone);
+  font-size: .82rem;
+  font-weight: 800;
+}
+
+.admin-card p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-actions {
+  justify-content: flex-start;
+}
+
+.admin-actions .danger {
+  border-color: rgba(255, 160, 150, .42);
+  color: #ffd5ce;
+}
+
+@media (max-width: 640px) {
+  .admin-header,
+  .admin-list-heading,
+  .admin-token {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  button,
+  a {
+    width: 100%;
+    text-align: center;
+  }
+}

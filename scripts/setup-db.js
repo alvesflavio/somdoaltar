@@ -17,9 +17,30 @@ await query(`
     nome text not null,
     cidade text,
     depoimento text not null,
+    approved boolean not null default false,
     created_at timestamptz not null default now()
   )
 `);
 
+await query(`
+  alter table testimonials
+  add column if not exists approved boolean not null default false
+`);
+
+await query(`
+  create table if not exists site_visits (
+    id integer primary key default 1,
+    total bigint not null default 0,
+    updated_at timestamptz not null default now(),
+    constraint single_site_visits_row check (id = 1)
+  )
+`);
+
+await query(`
+  update testimonials
+  set approved = true
+  where approved = false
+`);
+
 await pool.end();
-console.log('Banco preparado: tabelas contacts e testimonials disponíveis.');
+console.log('Banco preparado: tabelas contacts, testimonials e site_visits disponiveis.');

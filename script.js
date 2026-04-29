@@ -130,6 +130,8 @@ const testimonialNext = document.querySelector('[data-testimonial-next]');
 const teamCarousel = document.getElementById('team-carousel');
 const teamPrev = document.querySelector('[data-team-prev]');
 const teamNext = document.querySelector('[data-team-next]');
+const visitCounter = document.getElementById('visit-counter');
+const visitCount = document.getElementById('visit-count');
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => ({
@@ -189,7 +191,7 @@ testimonialForm.addEventListener('submit', async (event) => {
     }
 
     testimonialForm.reset();
-    testimonialStatus.textContent = 'Testemunho enviado. Obrigado por compartilhar.';
+    testimonialStatus.textContent = 'Testemunho enviado para validação. Obrigado por compartilhar.';
     await loadTestimonials();
   } catch (error) {
     testimonialStatus.textContent = error.message;
@@ -197,6 +199,32 @@ testimonialForm.addEventListener('submit', async (event) => {
 });
 
 loadTestimonials();
+
+async function loadVisitCount() {
+  if (!visitCounter || !visitCount) {
+    return;
+  }
+
+  try {
+    const alreadyCounted = sessionStorage.getItem('somdoaltar:visit-counted') === 'true';
+    const response = await fetch('/api/visits', {
+      method: alreadyCounted ? 'GET' : 'POST',
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Erro ao carregar contador.');
+    }
+
+    sessionStorage.setItem('somdoaltar:visit-counted', 'true');
+    visitCount.textContent = new Intl.NumberFormat('pt-BR').format(data.total || 0);
+    visitCounter.hidden = false;
+  } catch (error) {
+    visitCounter.hidden = true;
+  }
+}
+
+loadVisitCount();
 
 function scrollTestimonials(direction) {
   const card = testimonialsList.querySelector('.testimonial-card');

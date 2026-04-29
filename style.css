@@ -122,19 +122,21 @@ body.prelude-open {
   inset: 0;
   z-index: 0;
   display: grid;
-  grid-template-columns: repeat(5, minmax(12rem, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
   opacity: var(--entry-image-opacity);
   filter: blur(var(--entry-image-blur)) saturate(.9) contrast(1.12);
   transition: filter .2s linear, opacity .2s linear;
 }
 
 .entry-photo {
-  min-height: 100svh;
+  min-height: 0;
   background-image: var(--entry-img);
-  background-size: cover;
+  background-size: contain;
   background-position: center;
+  background-repeat: no-repeat;
   filter: grayscale(.78) brightness(var(--entry-image-brightness));
-  transform: scale(1.03);
+  transform: scale(1);
   animation: entryPhotoDrift 14s ease-in-out infinite alternate;
   transition: filter .2s linear, opacity .2s linear, transform .5s ease;
 }
@@ -516,6 +518,73 @@ h3 {
 main {
   width: min(1120px, 92vw);
   margin: 0 auto;
+}
+
+.section-photo {
+  position: relative;
+  isolation: isolate;
+}
+
+.section-photo::before {
+  content: "";
+  position: absolute;
+  top: clamp(-2rem, -3vw, -1rem);
+  bottom: clamp(-2rem, -3vw, -1rem);
+  left: 50%;
+  z-index: -2;
+  width: 100vw;
+  transform: translateX(-50%);
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, .88), rgba(0, 0, 0, .46) 48%, rgba(0, 0, 0, .9)),
+    linear-gradient(180deg, rgba(5, 5, 6, .86), rgba(5, 5, 6, .48) 44%, rgba(5, 5, 6, .9)),
+    var(--section-photo) center / cover no-repeat;
+  filter: grayscale(.46) brightness(.62) saturate(.88);
+  opacity: .72;
+}
+
+.section-photo::after {
+  content: "";
+  position: absolute;
+  top: clamp(-2rem, -3vw, -1rem);
+  bottom: clamp(-2rem, -3vw, -1rem);
+  left: 50%;
+  z-index: -1;
+  width: 100vw;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .026) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .018) 1px, transparent 1px);
+  background-size: 4px 4px;
+  opacity: .6;
+}
+
+.section-photo-hero {
+  --section-photo: url("assets/entry-bg-8.jpeg");
+}
+
+.section-photo-countdown {
+  --section-photo: url("assets/entry-bg-6.jpeg");
+}
+
+.section-photo-repertoire {
+  --section-photo: url("assets/entry-bg-10.jpeg");
+}
+
+.section-photo-media {
+  --section-photo: url("assets/entry-bg-7.jpeg");
+}
+
+.section-photo-testimonials {
+  --section-photo: url("assets/entry-bg-11.jpeg");
+}
+
+.section-photo-team {
+  --section-photo: url("assets/entry-bg-12.jpeg");
+}
+
+.section-photo-location {
+  --section-photo: url("assets/entry-bg-9.jpeg");
 }
 
 .hero {
@@ -1379,6 +1448,18 @@ footer {
   padding: 2rem 1rem;
 }
 
+.visit-counter {
+  margin-top: .45rem;
+  font-size: .82rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.visit-counter strong {
+  color: var(--paper);
+  font-weight: 700;
+}
+
 @keyframes breatheBlur {
   from {
     filter: blur(24px);
@@ -1516,7 +1597,7 @@ footer {
   }
 
   .entry-mosaic {
-    grid-template-columns: repeat(3, minmax(9rem, 1fr));
+    grid-template-columns: repeat(6, minmax(7rem, 1fr));
   }
 
   .entry-content {

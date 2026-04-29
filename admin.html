@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Som do Altar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:wght@500;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin.css" />
+</head>
+<body>
+  <main class="admin-shell">
+    <header class="admin-header">
+      <div>
+        <span>Som do Altar</span>
+        <h1>Admin de Testemunhos</h1>
+      </div>
+      <a href="/">Voltar ao site</a>
+    </header>
+
+    <section class="admin-panel">
+      <form class="admin-token" id="admin-token-form">
+        <label>Token de acesso<input id="admin-token" type="password" autocomplete="current-password" placeholder="ADMIN_TOKEN" required /></label>
+        <button type="submit">Entrar</button>
+      </form>
+      <p class="admin-status" id="admin-status" aria-live="polite"></p>
+    </section>
+
+    <section class="admin-panel admin-list-panel">
+      <div class="admin-list-heading">
+        <div>
+          <span>Moderação</span>
+          <h2>Testemunhos recebidos</h2>
+        </div>
+        <button id="admin-refresh" type="button">Atualizar</button>
+      </div>
+      <div class="admin-list" id="admin-list"></div>
+    </section>
+  </main>
+  <script src="/admin.js"></script>
+</body>
+</html>
