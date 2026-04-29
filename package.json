@@ -10,7 +10,7 @@
     "db:check": "node scripts/check-db.js"
   },
   "engines": {
-    "node": "22.x"
+    "node": "24.x"
   },
   "dependencies": {
     "dotenv": "^16.4.7",

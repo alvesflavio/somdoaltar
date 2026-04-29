@@ -127,6 +127,9 @@ const testimonialsList = document.getElementById('testimonials-list');
 const testimonialStatus = document.getElementById('testimonial-status');
 const testimonialPrev = document.querySelector('[data-testimonial-prev]');
 const testimonialNext = document.querySelector('[data-testimonial-next]');
+const teamCarousel = document.getElementById('team-carousel');
+const teamPrev = document.querySelector('[data-team-prev]');
+const teamNext = document.querySelector('[data-team-next]');
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => ({
@@ -140,7 +143,7 @@ function escapeHtml(value) {
 
 function renderTestimonials(testimonials) {
   if (!testimonials.length) {
-    testimonialsList.innerHTML = '<p class="form-status">Os depoimentos aparecerão aqui depois da gravação.</p>';
+    testimonialsList.innerHTML = '<p class="form-status">Os testemunhos aparecerão aqui depois da gravação.</p>';
     return;
   }
 
@@ -160,13 +163,13 @@ async function loadTestimonials() {
     const data = await response.json();
     renderTestimonials(data.testimonials || []);
   } catch (error) {
-    testimonialsList.innerHTML = '<p class="form-status">Não foi possível carregar os depoimentos agora.</p>';
+    testimonialsList.innerHTML = '<p class="form-status">Não foi possível carregar os testemunhos agora.</p>';
   }
 }
 
 testimonialForm.addEventListener('submit', async (event) => {
   event.preventDefault();
-  testimonialStatus.textContent = 'Enviando depoimento...';
+  testimonialStatus.textContent = 'Enviando testemunho...';
 
   const payload = {
     nome: document.getElementById('testimonial-name').value.trim(),
@@ -182,11 +185,11 @@ testimonialForm.addEventListener('submit', async (event) => {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || 'Erro ao enviar depoimento.');
+      throw new Error(data.error || 'Erro ao enviar testemunho.');
     }
 
     testimonialForm.reset();
-    testimonialStatus.textContent = 'Depoimento enviado. Obrigado por compartilhar.';
+    testimonialStatus.textContent = 'Testemunho enviado. Obrigado por compartilhar.';
     await loadTestimonials();
   } catch (error) {
     testimonialStatus.textContent = error.message;
@@ -203,6 +206,32 @@ function scrollTestimonials(direction) {
 
 testimonialPrev.addEventListener('click', () => scrollTestimonials(-1));
 testimonialNext.addEventListener('click', () => scrollTestimonials(1));
+
+function scrollTeam(direction) {
+  const card = teamCarousel.querySelector('.team-card');
+  const distance = card ? card.getBoundingClientRect().width + 12 : teamCarousel.clientWidth * .75;
+  teamCarousel.scrollBy({ left: distance * direction, behavior: 'smooth' });
+}
+
+teamPrev.addEventListener('click', () => scrollTeam(-1));
+teamNext.addEventListener('click', () => scrollTeam(1));
+
+let teamCarouselTimer = window.setInterval(() => {
+  const maxScroll = teamCarousel.scrollWidth - teamCarousel.clientWidth - 4;
+  if (teamCarousel.scrollLeft >= maxScroll) {
+    teamCarousel.scrollTo({ left: 0, behavior: 'smooth' });
+    return;
+  }
+  scrollTeam(1);
+}, 4200);
+
+function pauseTeamCarousel() {
+  window.clearInterval(teamCarouselTimer);
+}
+
+teamCarousel.addEventListener('pointerdown', pauseTeamCarousel, { once: true });
+teamPrev.addEventListener('pointerdown', pauseTeamCarousel, { once: true });
+teamNext.addEventListener('pointerdown', pauseTeamCarousel, { once: true });
 
 const observer = new IntersectionObserver((entries) => entries.forEach((entry) => entry.isIntersecting && entry.target.classList.add('visible')), { threshold: .2 });
 document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
