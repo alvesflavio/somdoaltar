@@ -1,0 +1,17 @@
+{
+  "name": "somdoaltar",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "db:setup": "node scripts/setup-db.js",
+    "db:check": "node scripts/check-db.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  }
+}
