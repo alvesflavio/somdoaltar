@@ -74,7 +74,6 @@
         <div class="hero-content">
           <h1>O<br />SOM DO ALTAR</h1>
         <p class="lead">Uma noite para registrar canções, testemunhos e o mover de Deus. Projeto com linguagem contemporânea, presença e excelência.</p>
-        <p class="date">GRAVAÇÃO AO VIVO • 06/05/2026 às 18:30</p>
         <div class="actions"><a class="btn primary" href="#repertorio">Ver repertório</a></div>
       </div>
     </section>
@@ -83,7 +82,6 @@
         <div class="countdown-card countdown-feature">
           <span class="countdown-label">Contagem regressiva</span>
           <h3>06 de maio de 2026</h3>
-          <p class="countdown-place">18:30 - Recanto Tagaste</p>
           <div class="countdown" id="countdown">
             <div><strong id="days">00</strong><span>Dias</span></div>
             <div><strong id="hours">00</strong><span>Horas</span></div>
@@ -243,7 +241,11 @@
 
       <section class="panel reveal" id="local">
         <h2>Local da Gravação</h2>
-        <div class="location-card">
+        <div class="location-lock">
+          <span>Coming soon</span>
+          <strong>Disponível em 06/05/2026</strong>
+        </div>
+        <div class="location-card" data-location-card>
           <span class="section-kicker">Destino</span>
           <h3>Recanto Tagaste</h3>
           <img class="location-photo" src="https://static.wixstatic.com/media/375430_ab289044f0844381ad7c4143ff28fe84~mv2.jpeg/v1/fill/w_748%2Ch_561%2Cal_c%2Cq_85%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/375430_ab289044f0844381ad7c4143ff28fe84~mv2.jpeg" alt="Capela do Recanto Tagaste" />
@@ -263,6 +265,10 @@
       <p class="visit-counter" id="visit-counter" hidden>Visitas: <strong id="visit-count">0</strong></p>
     </footer>
   </div>
+  <button class="music-toggle" id="music-toggle" type="button" aria-label="Começar música" aria-pressed="false">
+    <span class="music-toggle-icon" aria-hidden="true">♪</span>
+    <span class="music-toggle-text">Tocar</span>
+  </button>
   <script src="script.js"></script>
 </body>
 </html>

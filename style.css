@@ -380,6 +380,73 @@ body.prelude-open {
   transform: scale(1.04);
 }
 
+.music-toggle {
+  position: fixed;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 80;
+  width: 3rem;
+  min-height: 3rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .48rem;
+  overflow: hidden;
+  padding: 0 .85rem;
+  border: 1px solid rgba(210, 205, 195, .28);
+  border-radius: 999px;
+  background: rgba(3, 5, 8, .58);
+  color: rgba(249, 246, 241, .72);
+  cursor: pointer;
+  box-shadow: 0 14px 42px rgba(0, 0, 0, .3);
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(.5rem);
+  transition: width .25s ease, color .2s ease, background .2s ease, opacity .25s ease, transform .25s ease, visibility .25s ease;
+}
+
+.experience-started .music-toggle {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.music-toggle:hover,
+.music-toggle:focus-visible {
+  width: 8.8rem;
+  color: var(--creme);
+  background: rgba(3, 5, 8, .82);
+}
+
+.music-toggle-icon {
+  width: 1.35rem;
+  flex: 0 0 1.35rem;
+  display: inline-grid;
+  place-items: center;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.music-toggle-text {
+  white-space: nowrap;
+  font-size: .72rem;
+  font-weight: 800;
+  opacity: 0;
+  transform: translateX(-.25rem);
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.music-toggle:hover .music-toggle-text,
+.music-toggle:focus-visible .music-toggle-text {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.music-toggle.is-playing {
+  border-color: rgba(255, 226, 215, .42);
+  color: #ffe2d7;
+}
+
 .topbar {
   position: sticky;
   top: 0;
@@ -1192,6 +1259,57 @@ h3 {
   background:
     radial-gradient(circle at 8% 0%, rgba(210, 205, 195, .12), transparent 13rem),
     rgba(3, 5, 8, .5);
+}
+
+#local {
+  position: relative;
+  overflow: hidden;
+}
+
+#local.location-locked .location-card {
+  filter: blur(9px);
+  opacity: .48;
+  pointer-events: none;
+  user-select: none;
+}
+
+#local.location-locked .route-actions .btn {
+  cursor: not-allowed;
+}
+
+.location-lock {
+  position: absolute;
+  inset: 5.5rem 2rem 2rem;
+  z-index: 2;
+  display: none;
+  place-items: center;
+  align-content: center;
+  gap: .35rem;
+  text-align: center;
+  border: 1px solid rgba(210, 205, 195, .22);
+  border-radius: 18px;
+  background: rgba(3, 5, 8, .38);
+  backdrop-filter: blur(6px);
+}
+
+#local.location-locked .location-lock {
+  display: grid;
+}
+
+.location-lock span {
+  color: var(--text-light);
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(2.4rem, 8vw, 5rem);
+  line-height: .9;
+  text-transform: uppercase;
+}
+
+.location-lock strong {
+  color: var(--cobblestone);
+  font-family: "Cinzel Decorative", "Cormorant Garamond", serif;
+  font-size: .78rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
 }
 
 .location-photo {

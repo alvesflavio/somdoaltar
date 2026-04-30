@@ -1,10 +1,13 @@
-const eventDate = new Date('2026-05-06T18:30:00');
+const eventDate = new Date('2026-05-06T18:30:00-03:00');
+const locationReleaseDate = new Date('2026-05-06T12:00:00-03:00');
 const entryScreen = document.getElementById('entry-screen');
 const enterExperience = document.getElementById('enter-experience');
 const skipExperience = document.getElementById('skip-experience');
 const entryAudio = document.getElementById('entry-audio');
 const entryProgressBar = document.getElementById('entry-progress-bar');
 const entryProgressPercent = document.getElementById('entry-progress-percent');
+const musicToggle = document.getElementById('music-toggle');
+const locationSection = document.getElementById('local');
 const introDuration = 55000;
 let introAnimationFrame;
 let introStartedAt = 0;
@@ -27,6 +30,56 @@ function updateCountdown() {
 setInterval(updateCountdown, 1000);
 updateCountdown();
 
+function updateLocationLock() {
+  if (!locationSection) return;
+
+  const locked = new Date() < locationReleaseDate;
+  locationSection.classList.toggle('location-locked', locked);
+  locationSection.querySelectorAll('.route-actions a').forEach((link) => {
+    if (locked) {
+      if (!link.dataset.href) link.dataset.href = link.href;
+      link.removeAttribute('href');
+      link.setAttribute('aria-disabled', 'true');
+      link.setAttribute('tabindex', '-1');
+    } else if (link.dataset.href) {
+      link.href = link.dataset.href;
+      link.removeAttribute('aria-disabled');
+      link.removeAttribute('tabindex');
+    }
+  });
+}
+
+updateLocationLock();
+setInterval(updateLocationLock, 60000);
+
+function updateMusicToggle() {
+  const isPlaying = entryAudio && !entryAudio.paused;
+  musicToggle.classList.toggle('is-playing', isPlaying);
+  musicToggle.setAttribute('aria-pressed', String(isPlaying));
+  musicToggle.setAttribute('aria-label', isPlaying ? 'Pausar música' : 'Começar música');
+  musicToggle.querySelector('.music-toggle-icon').textContent = isPlaying ? 'Ⅱ' : '♪';
+  musicToggle.querySelector('.music-toggle-text').textContent = isPlaying ? 'Pausar' : 'Tocar';
+}
+
+entryAudio.addEventListener('play', updateMusicToggle);
+entryAudio.addEventListener('pause', updateMusicToggle);
+entryAudio.addEventListener('ended', updateMusicToggle);
+
+musicToggle.addEventListener('click', async () => {
+  if (entryAudio.paused) {
+    try {
+      await entryAudio.play();
+    } catch (error) {
+      updateMusicToggle();
+    }
+    return;
+  }
+
+  entryAudio.pause();
+});
+
+updateMusicToggle();
+
 function finishIntro({ stopAudio = false } = {}) {
   window.cancelAnimationFrame(introAnimationFrame);
   entryProgressBar.style.width = '100%';
@@ -44,6 +97,8 @@ function finishIntro({ stopAudio = false } = {}) {
     entryAudio.pause();
     entryAudio.currentTime = 0;
   }
+
+  updateMusicToggle();
 
   window.setTimeout(() => {
     entryScreen.hidden = true;
