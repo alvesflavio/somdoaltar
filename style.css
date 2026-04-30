@@ -1403,6 +1403,11 @@ h3 {
   font-weight: 700;
 }
 
+.optional-label {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
 .testimonial-form label:has(textarea),
 .testimonial-form button,
 .form-status {

@@ -33,6 +33,7 @@ function renderTestimonials(testimonials) {
         <div>
           <strong>${escapeHtml(item.nome)}</strong>
           <div><time>${new Date(item.created_at).toLocaleString('pt-BR')}</time></div>
+          ${item.whatsapp ? `<div>WhatsApp: ${escapeHtml(item.whatsapp)}</div>` : ''}
         </div>
         <span class="admin-badge">${item.approved ? 'Publicado' : 'Pendente'}</span>
       </header>

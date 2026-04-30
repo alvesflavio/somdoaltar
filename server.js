@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import crypto from 'node:crypto';
 import express from 'express';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -9,7 +10,14 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = Number(process.env.PORT || 8000);
 
-app.use(express.json());
+app.disable('x-powered-by');
+app.use(express.json({ limit: '16kb' }));
+app.use((_req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'no-referrer');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  next();
+});
 app.use('/assets', express.static(path.join(__dirname, 'public', 'assets')));
 
 app.get('/', (_req, res) => {
@@ -48,14 +56,27 @@ function requireAdmin(req, res, next) {
     return res.status(500).json({ ok: false, error: 'ADMIN_TOKEN nao foi configurado.' });
   }
 
-  if (requestToken !== adminToken) {
+  if (!requestToken || !secureTokenMatch(requestToken, adminToken)) {
     return res.status(401).json({ ok: false, error: 'Acesso administrativo negado.' });
   }
 
   next();
 }
 
-app.get('/api/db-check', async (_req, res, next) => {
+function secureTokenMatch(received, expected) {
+  const receivedBuffer = Buffer.from(received);
+  const expectedBuffer = Buffer.from(expected);
+
+  return receivedBuffer.length === expectedBuffer.length
+    && crypto.timingSafeEqual(receivedBuffer, expectedBuffer);
+}
+
+function parsePositiveInteger(value) {
+  const id = Number(value);
+  return Number.isSafeInteger(id) && id > 0 ? id : null;
+}
+
+app.get('/api/db-check', requireAdmin, async (_req, res, next) => {
   try {
     const result = await query('select now() as now');
     res.json({ ok: true, now: result.rows[0].now });
@@ -66,17 +87,27 @@ app.get('/api/db-check', async (_req, res, next) => {
 
 app.post('/api/contacts', async (req, res, next) => {
   try {
-    const { nome, email, mensagem } = req.body;
+    const nome = String(req.body.nome || '').trim();
+    const email = String(req.body.email || '').trim();
+    const mensagem = String(req.body.mensagem || '').trim();
 
     if (!nome || !email || !mensagem) {
       return res.status(400).json({ ok: false, error: 'Nome, e-mail e mensagem são obrigatórios.' });
+    }
+
+    if (nome.length > 80 || email.length > 160 || mensagem.length > 1200) {
+      return res.status(400).json({ ok: false, error: 'Contato acima do tamanho permitido.' });
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ ok: false, error: 'E-mail invalido.' });
     }
 
     const result = await query(
       `insert into contacts (nome, email, mensagem)
        values ($1, $2, $3)
        returning id, created_at`,
-      [nome.trim(), email.trim(), mensagem.trim()],
+      [nome, email, mensagem],
     );
 
     res.status(201).json({ ok: true, contact: result.rows[0] });
@@ -157,21 +188,22 @@ app.get('/api/testimonials', async (_req, res, next) => {
 app.post('/api/testimonials', async (req, res, next) => {
   try {
     const nome = String(req.body.nome || '').trim();
+    const whatsapp = String(req.body.whatsapp || '').trim();
     const depoimento = String(req.body.depoimento || '').trim();
 
     if (!nome || !depoimento) {
       return res.status(400).json({ ok: false, error: 'Nome e depoimento são obrigatórios.' });
     }
 
-    if (nome.length > 80 || depoimento.length > 1200) {
+    if (nome.length > 80 || whatsapp.length > 30 || depoimento.length > 1200) {
       return res.status(400).json({ ok: false, error: 'Depoimento acima do tamanho permitido.' });
     }
 
     const result = await query(
-      `insert into testimonials (nome, depoimento, approved)
-       values ($1, $2, false)
-       returning id, nome, depoimento, approved, created_at`,
-      [nome, depoimento],
+      `insert into testimonials (nome, whatsapp, depoimento, approved)
+       values ($1, $2, $3, false)
+       returning id, nome, whatsapp, depoimento, approved, created_at`,
+      [nome, whatsapp || null, depoimento],
     );
 
     res.status(201).json({ ok: true, testimonial: result.rows[0] });
@@ -183,7 +215,7 @@ app.post('/api/testimonials', async (req, res, next) => {
 app.get('/api/admin/testimonials', requireAdmin, async (_req, res, next) => {
   try {
     const result = await query(
-      `select id, nome, depoimento, approved, created_at
+      `select id, nome, whatsapp, depoimento, approved, created_at
        from testimonials
        order by approved asc, created_at desc
        limit 100`,
@@ -197,12 +229,17 @@ app.get('/api/admin/testimonials', requireAdmin, async (_req, res, next) => {
 
 app.patch('/api/admin/testimonials/:id/approve', requireAdmin, async (req, res, next) => {
   try {
+    const id = parsePositiveInteger(req.params.id);
+    if (!id) {
+      return res.status(400).json({ ok: false, error: 'Id invalido.' });
+    }
+
     const result = await query(
       `update testimonials
        set approved = true
        where id = $1
-       returning id, nome, depoimento, approved, created_at`,
-      [req.params.id],
+       returning id, nome, whatsapp, depoimento, approved, created_at`,
+      [id],
     );
 
     if (!result.rowCount) {
@@ -217,11 +254,16 @@ app.patch('/api/admin/testimonials/:id/approve', requireAdmin, async (req, res, 
 
 app.delete('/api/admin/testimonials/:id', requireAdmin, async (req, res, next) => {
   try {
+    const id = parsePositiveInteger(req.params.id);
+    if (!id) {
+      return res.status(400).json({ ok: false, error: 'Id invalido.' });
+    }
+
     const result = await query(
       `delete from testimonials
        where id = $1
        returning id`,
-      [req.params.id],
+      [id],
     );
 
     if (!result.rowCount) {

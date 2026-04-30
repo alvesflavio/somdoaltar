@@ -230,6 +230,7 @@ testimonialForm.addEventListener('submit', async (event) => {
 
   const payload = {
     nome: document.getElementById('testimonial-name').value.trim(),
+    whatsapp: document.getElementById('testimonial-whatsapp').value.trim(),
     depoimento: document.getElementById('testimonial-message').value.trim(),
   };
 
