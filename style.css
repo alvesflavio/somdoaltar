@@ -968,6 +968,35 @@ h1 {
   color: #ece6dc;
 }
 
+.lyrics-text {
+  display: grid;
+  gap: .85rem;
+}
+
+.lyrics-text p {
+  line-height: 1.7;
+}
+
+.lyrics-text p + p {
+  margin-top: 0;
+}
+
+.lyrics-text .lyrics-label {
+  width: fit-content;
+  margin-top: .25rem;
+  padding: .18rem .55rem;
+  border: 1px solid rgba(210, 205, 195, .2);
+  border-radius: 999px;
+  color: var(--creme);
+  background: rgba(210, 205, 195, .08);
+  font-family: "Cinzel Decorative", "Cormorant Garamond", serif;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
 h2 {
   margin-top: 0;
   font-size: 2.2rem;
@@ -1119,6 +1148,7 @@ h3 {
 .team-section {
   margin: 1rem 0;
   padding: clamp(2rem, 5vw, 3.5rem) 0;
+  position: relative;
 }
 
 .team-heading {
@@ -1137,6 +1167,45 @@ h3 {
 .team-heading p {
   margin: 0;
   color: var(--cobblestone);
+}
+
+.team-lock {
+  position: absolute;
+  inset: clamp(9rem, 16vw, 12rem) clamp(2rem, 6vw, 5rem) clamp(2rem, 5vw, 3.5rem);
+  z-index: 3;
+  display: none;
+  place-items: center;
+  align-content: center;
+  gap: .2rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+.team-locked .team-lock {
+  display: grid;
+}
+
+.team-locked .team-carousel {
+  filter: blur(9px);
+  opacity: .48;
+  pointer-events: none;
+  user-select: none;
+}
+
+.team-lock span {
+  color: var(--text-light);
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(2.4rem, 8vw, 5rem);
+  line-height: .9;
+  text-transform: uppercase;
+}
+
+.team-lock strong {
+  color: var(--cobblestone);
+  font-family: "Cinzel Decorative", "Cormorant Garamond", serif;
+  font-size: .78rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
 }
 
 .team-carousel {

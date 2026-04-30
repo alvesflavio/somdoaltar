@@ -313,30 +313,36 @@ testimonialPrev.addEventListener('click', () => scrollTestimonials(-1));
 testimonialNext.addEventListener('click', () => scrollTestimonials(1));
 
 function scrollTeam(direction) {
+  if (!teamCarousel) return;
+
   const card = teamCarousel.querySelector('.team-card');
   const distance = card ? card.getBoundingClientRect().width + 12 : teamCarousel.clientWidth * .75;
   teamCarousel.scrollBy({ left: distance * direction, behavior: 'smooth' });
 }
 
-teamPrev.addEventListener('click', () => scrollTeam(-1));
-teamNext.addEventListener('click', () => scrollTeam(1));
+teamPrev?.addEventListener('click', () => scrollTeam(-1));
+teamNext?.addEventListener('click', () => scrollTeam(1));
 
-let teamCarouselTimer = window.setInterval(() => {
-  const maxScroll = teamCarousel.scrollWidth - teamCarousel.clientWidth - 4;
-  if (teamCarousel.scrollLeft >= maxScroll) {
-    teamCarousel.scrollTo({ left: 0, behavior: 'smooth' });
-    return;
-  }
-  scrollTeam(1);
-}, 4200);
+let teamCarouselTimer;
+
+if (teamCarousel) {
+  teamCarouselTimer = window.setInterval(() => {
+    const maxScroll = teamCarousel.scrollWidth - teamCarousel.clientWidth - 4;
+    if (teamCarousel.scrollLeft >= maxScroll) {
+      teamCarousel.scrollTo({ left: 0, behavior: 'smooth' });
+      return;
+    }
+    scrollTeam(1);
+  }, 4200);
+}
 
 function pauseTeamCarousel() {
   window.clearInterval(teamCarouselTimer);
 }
 
-teamCarousel.addEventListener('pointerdown', pauseTeamCarousel, { once: true });
-teamPrev.addEventListener('pointerdown', pauseTeamCarousel, { once: true });
-teamNext.addEventListener('pointerdown', pauseTeamCarousel, { once: true });
+teamCarousel?.addEventListener('pointerdown', pauseTeamCarousel, { once: true });
+teamPrev?.addEventListener('pointerdown', pauseTeamCarousel, { once: true });
+teamNext?.addEventListener('pointerdown', pauseTeamCarousel, { once: true });
 
 const observer = new IntersectionObserver((entries) => entries.forEach((entry) => entry.isIntersecting && entry.target.classList.add('visible')), { threshold: .2 });
 document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));

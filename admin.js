@@ -19,7 +19,10 @@ function escapeHtml(value) {
 }
 
 function adminHeaders() {
-  return { 'x-admin-token': adminToken };
+  return {
+    Authorization: `Bearer ${adminToken}`,
+    'x-admin-token': adminToken,
+  };
 }
 
 function whatsappDigits(value) {
@@ -32,6 +35,31 @@ function whatsappDigits(value) {
 function whatsappUrl(user) {
   const message = encodeURIComponent(`Ola, ${user.nome}! Aqui e a equipe do Som do Altar.`);
   return `https://wa.me/${whatsappDigits(user.whatsapp)}?text=${message}`;
+}
+
+async function readJsonResponse(response, fallbackMessage) {
+  const contentType = response.headers.get('content-type') || '';
+
+  if (!contentType.includes('application/json')) {
+    throw new Error(`${fallbackMessage} A API retornou ${response.status || 'uma resposta'} em formato inesperado.`);
+  }
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    const error = new Error(data.error || fallbackMessage);
+    error.status = response.status;
+    throw error;
+  }
+
+  return data;
+}
+
+function clearSavedToken() {
+  adminToken = '';
+  tokenInput.value = '';
+  localStorage.removeItem('somdoaltar:admin-token');
+  tokenInput.focus();
 }
 
 function renderTestimonials(testimonials) {
@@ -94,19 +122,30 @@ async function loadTestimonials() {
   statusEl.textContent = 'Carregando testemunhos...';
 
   try {
-    const response = await fetch('/api/admin/testimonials', { headers: adminHeaders() });
-    const data = await response.json();
+    const testimonialsResponse = await fetch('/api/admin/testimonials', { headers: adminHeaders() });
+    const data = await readJsonResponse(testimonialsResponse, 'Nao foi possivel carregar os testemunhos.');
 
-    if (!response.ok) {
-      throw new Error(data.error || 'Nao foi possivel carregar os testemunhos.');
+    let users = data.testimonials || [];
+
+    try {
+      const usersResponse = await fetch('/api/admin/users', { headers: adminHeaders() });
+      const usersData = await readJsonResponse(usersResponse, 'Nao foi possivel carregar os usuarios.');
+      users = usersData.users || users;
+    } catch (error) {
+      statusEl.textContent = `${error.message} Exibindo usuarios encontrados nos testemunhos.`;
     }
 
     renderTestimonials(data.testimonials || []);
-    renderUsers(data.testimonials || []);
-    statusEl.textContent = 'Lista atualizada.';
+    renderUsers(users);
+    if (!statusEl.textContent.includes('Exibindo usuarios')) {
+      statusEl.textContent = 'Lista atualizada.';
+    }
   } catch (error) {
     listEl.innerHTML = '';
     usersEl.innerHTML = '';
+    if (error.status === 401) {
+      clearSavedToken();
+    }
     statusEl.textContent = error.message;
   }
 }
@@ -132,11 +171,7 @@ listEl.addEventListener('click', async (event) => {
 
   try {
     const response = await action;
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Acao nao concluida.');
-    }
+    await readJsonResponse(response, 'Acao nao concluida.');
 
     await loadTestimonials();
   } catch (error) {

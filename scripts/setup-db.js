@@ -34,6 +34,26 @@ await query(`
 `);
 
 await query(`
+  create table if not exists contact_users (
+    id bigserial primary key,
+    nome text not null,
+    whatsapp text not null unique,
+    source text not null default 'testimonial',
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now()
+  )
+`);
+
+await query(`
+  insert into contact_users (nome, whatsapp, source, created_at, updated_at)
+  select distinct on (whatsapp) nome, whatsapp, 'testimonial', created_at, now()
+  from testimonials
+  where whatsapp is not null and whatsapp <> ''
+  order by whatsapp, created_at desc
+  on conflict (whatsapp) do nothing
+`);
+
+await query(`
   create table if not exists site_visits (
     id integer primary key default 1,
     total bigint not null default 0,
@@ -43,4 +63,4 @@ await query(`
 `);
 
 await pool.end();
-console.log('Banco preparado: tabelas contacts, testimonials e site_visits disponiveis.');
+console.log('Banco preparado: tabelas contacts, testimonials, contact_users e site_visits disponiveis.');
