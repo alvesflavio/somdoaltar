@@ -2,6 +2,7 @@ const tokenForm = document.getElementById('admin-token-form');
 const tokenInput = document.getElementById('admin-token');
 const statusEl = document.getElementById('admin-status');
 const listEl = document.getElementById('admin-list');
+const usersEl = document.getElementById('admin-users');
 const refreshBtn = document.getElementById('admin-refresh');
 
 let adminToken = localStorage.getItem('somdoaltar:admin-token') || '';
@@ -19,6 +20,18 @@ function escapeHtml(value) {
 
 function adminHeaders() {
   return { 'x-admin-token': adminToken };
+}
+
+function whatsappDigits(value) {
+  const digits = String(value || '').replace(/\D/g, '');
+  if (digits.length === 11) return `55${digits}`;
+  if (digits.length === 13 && digits.startsWith('55')) return digits;
+  return '';
+}
+
+function whatsappUrl(user) {
+  const message = encodeURIComponent(`Ola, ${user.nome}! Aqui e a equipe do Som do Altar.`);
+  return `https://wa.me/${whatsappDigits(user.whatsapp)}?text=${message}`;
 }
 
 function renderTestimonials(testimonials) {
@@ -46,6 +59,37 @@ function renderTestimonials(testimonials) {
   `).join('');
 }
 
+function renderUsers(testimonials) {
+  const usersByPhone = new Map();
+
+  testimonials.forEach((item) => {
+    const digits = whatsappDigits(item.whatsapp);
+    if (!digits || usersByPhone.has(digits)) return;
+    usersByPhone.set(digits, {
+      nome: item.nome,
+      whatsapp: item.whatsapp,
+      created_at: item.created_at,
+    });
+  });
+
+  const users = Array.from(usersByPhone.values());
+
+  if (!users.length) {
+    usersEl.innerHTML = '<p class="admin-status">Nenhum usuario com WhatsApp informado ainda.</p>';
+    return;
+  }
+
+  usersEl.innerHTML = users.map((user) => `
+    <article class="admin-user-card">
+      <div>
+        <strong>${escapeHtml(user.nome)}</strong>
+        <span>${escapeHtml(user.whatsapp)}</span>
+      </div>
+      <a class="contact-link" href="${whatsappUrl(user)}" target="_blank" rel="noopener">Entrar em contato</a>
+    </article>
+  `).join('');
+}
+
 async function loadTestimonials() {
   statusEl.textContent = 'Carregando testemunhos...';
 
@@ -58,9 +102,11 @@ async function loadTestimonials() {
     }
 
     renderTestimonials(data.testimonials || []);
+    renderUsers(data.testimonials || []);
     statusEl.textContent = 'Lista atualizada.';
   } catch (error) {
     listEl.innerHTML = '';
+    usersEl.innerHTML = '';
     statusEl.textContent = error.message;
   }
 }

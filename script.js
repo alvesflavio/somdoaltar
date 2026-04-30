@@ -178,6 +178,7 @@ document.addEventListener('click', (event) => {
 });
 
 const testimonialForm = document.getElementById('testimonial-form');
+const testimonialWhatsapp = document.getElementById('testimonial-whatsapp');
 const testimonialsList = document.getElementById('testimonials-list');
 const testimonialStatus = document.getElementById('testimonial-status');
 const testimonialPrev = document.querySelector('[data-testimonial-prev]');
@@ -197,6 +198,26 @@ function escapeHtml(value) {
     "'": '&#39;',
   }[char]));
 }
+
+function formatWhatsapp(value) {
+  const digits = value.replace(/\D/g, '').replace(/^55(?=\d{11}$)/, '').slice(0, 11);
+
+  if (!digits) return '';
+  if (digits.length <= 2) return `(${digits}`;
+
+  const ddd = digits.slice(0, 2);
+  const number = digits.slice(2);
+
+  if (number.length <= 5) {
+    return `(${ddd}) ${number}`;
+  }
+
+  return `(${ddd}) ${number.slice(0, 5)}-${number.slice(5, 9)}`;
+}
+
+testimonialWhatsapp.addEventListener('input', () => {
+  testimonialWhatsapp.value = formatWhatsapp(testimonialWhatsapp.value);
+});
 
 function renderTestimonials(testimonials) {
   if (!testimonials.length) {

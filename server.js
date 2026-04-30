@@ -14,7 +14,7 @@ app.disable('x-powered-by');
 app.use(express.json({ limit: '16kb' }));
 app.use((_req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('Referrer-Policy', 'no-referrer');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   next();
 });
@@ -74,6 +74,24 @@ function secureTokenMatch(received, expected) {
 function parsePositiveInteger(value) {
   const id = Number(value);
   return Number.isSafeInteger(id) && id > 0 ? id : null;
+}
+
+function normalizeWhatsapp(value) {
+  let digits = String(value || '').replace(/\D/g, '');
+
+  if (digits.startsWith('55') && digits.length === 13) {
+    digits = digits.slice(2);
+  }
+
+  if (!digits) {
+    return '';
+  }
+
+  if (!/^[1-9]{2}9\d{8}$/.test(digits)) {
+    return null;
+  }
+
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
 }
 
 app.get('/api/db-check', requireAdmin, async (_req, res, next) => {
@@ -188,14 +206,18 @@ app.get('/api/testimonials', async (_req, res, next) => {
 app.post('/api/testimonials', async (req, res, next) => {
   try {
     const nome = String(req.body.nome || '').trim();
-    const whatsapp = String(req.body.whatsapp || '').trim();
+    const whatsapp = normalizeWhatsapp(req.body.whatsapp);
     const depoimento = String(req.body.depoimento || '').trim();
 
     if (!nome || !depoimento) {
       return res.status(400).json({ ok: false, error: 'Nome e depoimento são obrigatórios.' });
     }
 
-    if (nome.length > 80 || whatsapp.length > 30 || depoimento.length > 1200) {
+    if (whatsapp === null) {
+      return res.status(400).json({ ok: false, error: 'Informe um WhatsApp valido no formato (11) 99999-9999.' });
+    }
+
+    if (nome.length > 80 || depoimento.length > 1200) {
       return res.status(400).json({ ok: false, error: 'Depoimento acima do tamanho permitido.' });
     }
 

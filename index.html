@@ -146,7 +146,7 @@
       <section class="panel reveal" id="midia">
         <h2>Minhas Redes Sociais</h2>
         <div class="video-feature">
-          <iframe src="https://www.youtube.com/embed/NHgw_sQpmsI" title="Som do Altar" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          <iframe src="https://www.youtube.com/embed/NHgw_sQpmsI" title="Som do Altar" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
         </div>
         <div class="gallery-placeholder">
           <span>Fotos em breve</span>
@@ -164,7 +164,7 @@
           <summary>Compartilhar testemunho</summary>
           <form class="testimonial-form" id="testimonial-form">
             <label>Nome<input id="testimonial-name" name="nome" type="text" maxlength="80" placeholder="Seu nome" required /></label>
-            <label>WhatsApp <span class="optional-label">(opcional)</span><input id="testimonial-whatsapp" name="whatsapp" type="tel" maxlength="30" autocomplete="tel" placeholder="Coloque seu WhatsApp para receber novidades" /></label>
+            <label>WhatsApp <span class="optional-label">(opcional)</span><input id="testimonial-whatsapp" name="whatsapp" type="tel" inputmode="numeric" maxlength="15" autocomplete="tel" pattern="\([1-9]{2}\) 9[0-9]{4}-[0-9]{4}" title="Use o formato (11) 99999-9999" placeholder="(11) 99999-9999" /></label>
             <label>Testemunho<textarea id="testimonial-message" name="depoimento" rows="5" maxlength="1200" placeholder="Conte o que Deus realizou nessa noite..." required></textarea></label>
             <button type="submit" class="btn primary">Enviar testemunho</button>
             <p class="form-status" id="testimonial-status" aria-live="polite"></p>
