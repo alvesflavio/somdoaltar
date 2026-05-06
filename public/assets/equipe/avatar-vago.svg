@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" role="img" aria-labelledby="title desc">
+  <title id="title">Avatar vago</title>
+  <desc id="desc">Imagem temporaria para integrante da equipe sem foto definida.</desc>
+  <rect width="600" height="800" fill="#120b0b"/>
+  <circle cx="300" cy="280" r="118" fill="#d2cdc3" opacity=".22"/>
+  <path d="M125 710c18-137 87-219 175-219s157 82 175 219" fill="#d2cdc3" opacity=".18"/>
+  <circle cx="300" cy="280" r="86" fill="none" stroke="#d2cdc3" stroke-width="10" opacity=".38"/>
+  <path d="M174 688c24-98 75-148 126-148s102 50 126 148" fill="none" stroke="#d2cdc3" stroke-width="10" opacity=".32"/>
+  <path d="M110 92h380M110 708h380" stroke="#d2cdc3" stroke-width="4" opacity=".18"/>
+</svg>

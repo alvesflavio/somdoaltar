@@ -312,37 +312,25 @@ function scrollTestimonials(direction) {
 testimonialPrev.addEventListener('click', () => scrollTestimonials(-1));
 testimonialNext.addEventListener('click', () => scrollTestimonials(1));
 
-function scrollTeam(direction) {
+function startTeamCarouselLoop() {
   if (!teamCarousel) return;
 
-  const card = teamCarousel.querySelector('.team-card');
-  const distance = card ? card.getBoundingClientRect().width + 12 : teamCarousel.clientWidth * .75;
-  teamCarousel.scrollBy({ left: distance * direction, behavior: 'smooth' });
+  if (!teamCarousel.dataset.loopReady) {
+    const originalCards = Array.from(teamCarousel.children);
+    originalCards.forEach((card) => {
+      const clone = card.cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      teamCarousel.appendChild(clone);
+    });
+    teamCarousel.dataset.loopReady = 'true';
+  }
+
+  teamCarousel.classList.add('is-looping');
 }
-
-teamPrev?.addEventListener('click', () => scrollTeam(-1));
-teamNext?.addEventListener('click', () => scrollTeam(1));
-
-let teamCarouselTimer;
 
 if (teamCarousel) {
-  teamCarouselTimer = window.setInterval(() => {
-    const maxScroll = teamCarousel.scrollWidth - teamCarousel.clientWidth - 4;
-    if (teamCarousel.scrollLeft >= maxScroll) {
-      teamCarousel.scrollTo({ left: 0, behavior: 'smooth' });
-      return;
-    }
-    scrollTeam(1);
-  }, 4200);
+  startTeamCarouselLoop();
 }
-
-function pauseTeamCarousel() {
-  window.clearInterval(teamCarouselTimer);
-}
-
-teamCarousel?.addEventListener('pointerdown', pauseTeamCarousel, { once: true });
-teamPrev?.addEventListener('pointerdown', pauseTeamCarousel, { once: true });
-teamNext?.addEventListener('pointerdown', pauseTeamCarousel, { once: true });
 
 const observer = new IntersectionObserver((entries) => entries.forEach((entry) => entry.isIntersecting && entry.target.classList.add('visible')), { threshold: .2 });
 document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));

@@ -981,22 +981,6 @@ h1 {
   margin-top: 0;
 }
 
-.lyrics-text .lyrics-label {
-  width: fit-content;
-  margin-top: .25rem;
-  padding: .18rem .55rem;
-  border: 1px solid rgba(210, 205, 195, .2);
-  border-radius: 999px;
-  color: var(--creme);
-  background: rgba(210, 205, 195, .08);
-  font-family: "Cinzel Decorative", "Cormorant Garamond", serif;
-  font-size: .68rem;
-  font-weight: 700;
-  letter-spacing: .14em;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
 h2 {
   margin-top: 0;
   font-size: 2.2rem;
@@ -1210,50 +1194,70 @@ h3 {
 
 .team-carousel {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
-  gap: .75rem;
-  max-width: 920px;
+  gap: .9rem;
+  max-width: 1120px;
   margin: 0 auto;
+  overflow: hidden;
+}
+
+.team-carousel .carousel-btn {
+  display: none;
 }
 
 .team-grid {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: clamp(12rem, 24vw, 17rem);
-  gap: .75rem;
-  overflow-x: auto;
+  display: flex;
+  gap: .9rem;
+  width: max-content;
+  overflow: visible;
   overscroll-behavior-inline: contain;
-  scroll-behavior: smooth;
-  scroll-snap-type: x mandatory;
-  scrollbar-color: rgba(210, 205, 195, .32) transparent;
-  scrollbar-width: thin;
+  scroll-behavior: auto;
+  scroll-snap-type: none;
+  scrollbar-width: none;
   padding: .15rem .1rem .65rem;
+  will-change: transform;
 }
 
-.team-grid::-webkit-scrollbar,
+.team-grid.is-looping {
+  animation: team-loop 34s linear infinite;
+}
+
+.team-grid::-webkit-scrollbar {
+  display: none;
+}
+
 .testimonials-list::-webkit-scrollbar {
   height: 6px;
 }
 
-.team-grid::-webkit-scrollbar-track,
 .testimonials-list::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.team-grid::-webkit-scrollbar-thumb,
 .testimonials-list::-webkit-scrollbar-thumb {
   border-radius: 999px;
   background: linear-gradient(90deg, rgba(210, 205, 195, .18), rgba(210, 205, 195, .45));
 }
 
 .team-card {
-  min-height: clamp(13.5rem, 24vw, 18rem);
+  flex: 0 0 clamp(14rem, 26vw, 20rem);
+  min-height: clamp(16.5rem, 29vw, 22.5rem);
   position: relative;
   overflow: hidden;
   border: 1px solid rgba(210, 205, 195, .2);
   background: #160c0c;
   scroll-snap-align: start;
+}
+
+@keyframes team-loop {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(calc(-50% - .45rem));
+  }
 }
 
 .team-card img {
@@ -1266,6 +1270,18 @@ h3 {
   opacity: .72;
   transform: scale(1.02);
   transition: filter .5s ease, opacity .5s ease, transform .5s ease;
+}
+
+.team-card--logo img {
+  padding: 1rem;
+  object-fit: contain;
+  background: #000;
+}
+
+.team-card--placeholder img {
+  object-fit: cover;
+  filter: none;
+  opacity: .86;
 }
 
 .team-card::after {
@@ -1775,7 +1791,11 @@ footer {
   }
 
   .team-grid {
-    grid-auto-columns: clamp(12rem, 38vw, 15rem);
+    grid-auto-columns: unset;
+  }
+
+  .team-card {
+    flex-basis: clamp(14rem, 42vw, 17rem);
   }
 }
 
@@ -1843,22 +1863,18 @@ footer {
   }
 
   .team-carousel {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
 
   .team-grid {
     grid-column: 1 / -1;
     grid-row: 1;
-    grid-auto-columns: minmax(210px, 72%);
+    grid-auto-columns: unset;
   }
 
   .team-card {
-    min-height: 15rem;
-  }
-
-  .team-carousel .carousel-btn {
-    grid-row: 2;
-    justify-self: center;
+    flex-basis: clamp(240px, 78vw, 320px);
+    min-height: 17.5rem;
   }
 
   .testimonials-carousel {
